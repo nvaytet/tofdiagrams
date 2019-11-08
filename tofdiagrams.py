@@ -29,13 +29,11 @@ class Chopper:
 
 choppers = []
 
-
-
 choppers.append(Chopper(frequency=70,
                         openings=np.array([83.71, 94.7, 140.49, 155.79,
                                             193.26, 212.56, 242.32, 265.33,
                                             287.91, 314.37, 330.3, 360.0]) + 15.0,
-                        phase=17.2,
+                        phase=47.10,
                         distance=6.6,
                         unit="deg",
                         name="WFM1"))
@@ -44,24 +42,73 @@ choppers.append(Chopper(frequency=70,
                         openings=np.array([65.04, 76.03, 126.1, 141.4, 182.88,
                                            202.18, 235.67, 254.97, 284.73,
                                            307.74, 330.00, 360.0]) + 15.0,
-                        phase=46,
+                        phase=76.76,
                         distance=7.1,
                         unit="deg",
                         name="WFM2"))
 
 choppers.append(Chopper(frequency=56,
                         openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
-                        phase=32,
+                        phase=62.40,
                         distance=8.8,
                         unit="deg",
                         name="Frame-overlap 1"))
 
-# choppers.append(Chopper(frequency=28,
-#                         openings=np.array([ 98.  , 134.6 , 154.  , 190.06, 206.8 , 237.01, 254.  , 280.88, 299.  , 323.56, 344.65, 373.76]),
-#                         phase=20,
-#                         distance=15.9,
+choppers.append(Chopper(frequency=28,
+                        openings=np.array([ 98.  , 134.6 , 154.  , 190.06, 206.8 , 237.01, 254.  , 280.88, 299.  , 323.56, 344.65, 373.76]),
+                        phase=12.27,
+                        distance=15.9,
+                        unit="deg",
+                        name="Frame-overlap 2"))
+
+
+
+
+
+
+
+
+
+
+
+# choppers.append(Chopper(frequency=70,
+#                         openings=np.array([83.71, 94.7, 140.49, 155.79,
+#                                             193.26, 212.56, 242.32, 265.33,
+#                                             287.91, 314.37, 330.3, 360.0]) + 15.0,
+#                         phase=17.2,
+#                         distance=6.6,
 #                         unit="deg",
-#                         name="Frame-overlap 2"))
+#                         name="WFM1"))
+
+# choppers.append(Chopper(frequency=70,
+#                         openings=np.array([65.04, 76.03, 126.1, 141.4, 182.88,
+#                                            202.18, 235.67, 254.97, 284.73,
+#                                            307.74, 330.00, 360.0]) + 15.0,
+#                         phase=46,
+#                         distance=7.1,
+#                         unit="deg",
+#                         name="WFM2"))
+
+# choppers.append(Chopper(frequency=56,
+#                         openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
+#                         phase=32,
+#                         distance=8.8,
+#                         unit="deg",
+#                         name="Frame-overlap 1"))
+
+# # choppers.append(Chopper(frequency=56,
+# #                         openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
+# #                         phase=40,
+# #                         distance=8.8,
+# #                         unit="deg",
+# #                         name="Frame-overlap 1"))
+
+# # choppers.append(Chopper(frequency=28,
+# #                         openings=np.array([ 98.  , 134.6 , 154.  , 190.06, 206.8 , 237.01, 254.  , 280.88, 299.  , 323.56, 344.65, 373.76]),
+# #                         phase=-20,
+# #                         distance=15.9,
+# #                         unit="deg",
+# #                         name="Frame-overlap 2"))
 
 # Seconds to microseconds
 microseconds = 1.0e6
@@ -73,7 +120,10 @@ nframes = 6
 pulse_length = 2.86e-03
 
 # Position of detector
-detector_position = 32.4
+detector_position = 28.98 # 32.4
+# # Monitor
+# detector_position = 25
+
 
 # Frame colors
 colors = ['b', 'k', 'g', 'r', 'cyan', 'magenta']
@@ -99,7 +149,7 @@ x1 = pulse_length * microseconds
 y0 = 0.0
 y1 = 0.0
 psize = detector_position/50.0
-rect = Rectangle((x0, y0), x1, -psize, lw=1, fc='orange', ec='k', hatch="////")
+rect = Rectangle((x0, y0), x1, -psize, lw=1, fc='orange', ec='k', hatch="////", zorder=10)
 ax.add_patch(rect)
 ax.text(x0, -psize, "Source pulse (2.86 ms)", ha="left", va="top", fontsize=6)
 
@@ -128,7 +178,7 @@ for i in range(nframes):
             if slope_max < slope2:
                 x3 = xmax
                 y3 = ch.distance
-                slope2 = slope_max
+                slope_max = slope2
 
     # Compute line equation parameters y = a*x + b
     a1 = (y3 - y0) / (x3 - x0)
