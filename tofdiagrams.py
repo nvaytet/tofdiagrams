@@ -69,7 +69,8 @@ nframes = 6
 pulse_length = 2.86e-03
 
 # Position of detector
-detector_position = 28.98 # 32.4
+# detector_position = 28.98 # 32.4
+detector_position = 28.42 # 32.4
 # # Monitor
 # detector_position = 25
 
@@ -155,14 +156,12 @@ for i in range(nframes):
     ax.text(0.5*(x4+x5), detector_position, "Frame {}".format(i+1), ha="center", va="top")
 
 
-
 # Plot detector location
 ax.plot([0, np.amax(frame_boundaries)], [detector_position, detector_position], lw=3, color='grey')
 ax.text(0.0, detector_position, "Detector", va="bottom", ha="left")
-
+# Plot WFM choppers mid-point
 ax.plot([0, np.amax(frame_boundaries)], [wfm_choppers_midpoint, wfm_choppers_midpoint], lw=1, color='grey', ls="dashed")
 ax.text(np.amax(frame_boundaries), wfm_choppers_midpoint, "WFM chopper mid-point", va="bottom", ha="right")
-
 
 # Print results
 print("The frame boundaries are:", frame_boundaries)
