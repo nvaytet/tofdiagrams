@@ -24,91 +24,40 @@ class Chopper:
         self.name = name
 
 
+choppers = dict()
 
+choppers["WFM1"] = Chopper(frequency=70,
+                           openings=np.array([83.71, 94.7, 140.49, 155.79,
+                                               193.26, 212.56, 242.32, 265.33,
+                                               287.91, 314.37, 330.3, 360.0]) + 15.0,
+                           phase=47.10,
+                           distance=6.6,
+                           unit="deg",
+                           name="WFM1")
 
+choppers["WFM2"] = Chopper(frequency=70,
+                           openings=np.array([65.04, 76.03, 126.1, 141.4, 182.88,
+                                              202.18, 235.67, 254.97, 284.73,
+                                              307.74, 330.00, 360.0]) + 15.0,
+                           phase=76.76,
+                           distance=7.1,
+                           unit="deg",
+                           name="WFM2")
 
-choppers = []
+choppers["FOL1"] = Chopper(frequency=56,
+                           openings=np.array([74.6, 95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
+                           phase=62.40,
+                           distance=8.8,
+                           unit="deg",
+                           name="Frame-overlap 1")
 
-choppers.append(Chopper(frequency=70,
-                        openings=np.array([83.71, 94.7, 140.49, 155.79,
-                                            193.26, 212.56, 242.32, 265.33,
-                                            287.91, 314.37, 330.3, 360.0]) + 15.0,
-                        phase=47.10,
-                        distance=6.6,
-                        unit="deg",
-                        name="WFM1"))
+choppers["FOL2"] = Chopper(frequency=28,
+                           openings=np.array([98., 134.6, 154., 190.06, 206.8, 237.01, 254., 280.88, 299., 323.56, 344.65, 373.76]),
+                           phase=12.27,
+                           distance=15.9,
+                           unit="deg",
+                           name="Frame-overlap 2")
 
-choppers.append(Chopper(frequency=70,
-                        openings=np.array([65.04, 76.03, 126.1, 141.4, 182.88,
-                                           202.18, 235.67, 254.97, 284.73,
-                                           307.74, 330.00, 360.0]) + 15.0,
-                        phase=76.76,
-                        distance=7.1,
-                        unit="deg",
-                        name="WFM2"))
-
-choppers.append(Chopper(frequency=56,
-                        openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
-                        phase=62.40,
-                        distance=8.8,
-                        unit="deg",
-                        name="Frame-overlap 1"))
-
-choppers.append(Chopper(frequency=28,
-                        openings=np.array([ 98.  , 134.6 , 154.  , 190.06, 206.8 , 237.01, 254.  , 280.88, 299.  , 323.56, 344.65, 373.76]),
-                        phase=12.27,
-                        distance=15.9,
-                        unit="deg",
-                        name="Frame-overlap 2"))
-
-
-
-
-
-
-
-
-
-
-
-# choppers.append(Chopper(frequency=70,
-#                         openings=np.array([83.71, 94.7, 140.49, 155.79,
-#                                             193.26, 212.56, 242.32, 265.33,
-#                                             287.91, 314.37, 330.3, 360.0]) + 15.0,
-#                         phase=17.2,
-#                         distance=6.6,
-#                         unit="deg",
-#                         name="WFM1"))
-
-# choppers.append(Chopper(frequency=70,
-#                         openings=np.array([65.04, 76.03, 126.1, 141.4, 182.88,
-#                                            202.18, 235.67, 254.97, 284.73,
-#                                            307.74, 330.00, 360.0]) + 15.0,
-#                         phase=46,
-#                         distance=7.1,
-#                         unit="deg",
-#                         name="WFM2"))
-
-# choppers.append(Chopper(frequency=56,
-#                         openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
-#                         phase=32,
-#                         distance=8.8,
-#                         unit="deg",
-#                         name="Frame-overlap 1"))
-
-# # choppers.append(Chopper(frequency=56,
-# #                         openings=np.array([ 74.6,  95.2, 139.6, 162.8, 194.3, 216.1, 245.3, 263.1, 294.8, 310.5, 347.2, 371.6]),
-# #                         phase=40,
-# #                         distance=8.8,
-# #                         unit="deg",
-# #                         name="Frame-overlap 1"))
-
-# # choppers.append(Chopper(frequency=28,
-# #                         openings=np.array([ 98.  , 134.6 , 154.  , 190.06, 206.8 , 237.01, 254.  , 280.88, 299.  , 323.56, 344.65, 373.76]),
-# #                         phase=-20,
-# #                         distance=15.9,
-# #                         unit="deg",
-# #                         name="Frame-overlap 2"))
 
 # Seconds to microseconds
 microseconds = 1.0e6
@@ -124,6 +73,8 @@ detector_position = 28.98 # 32.4
 # # Monitor
 # detector_position = 25
 
+# Midpoint between WFM choppers which acts as new source distance for stitched data
+wfm_choppers_midpoint = 0.5 * (choppers["WFM1"].distance + choppers["WFM2"].distance)
 
 # Frame colors
 colors = ['b', 'k', 'g', 'r', 'cyan', 'magenta']
@@ -134,7 +85,7 @@ ax.grid(True, color='lightgray', linestyle="dotted")
 ax.set_axisbelow(True)
 
 # Plot the chopper openings
-for ch in choppers:
+for key, ch in choppers.items():
     dist = [ch.distance, ch.distance]
     for i in range(0, len(ch.openings), 2):
         t1 = (ch.openings[i] + ch.phase) / ch.omega * microseconds
@@ -155,13 +106,14 @@ ax.text(x0, -psize, "Source pulse (2.86 ms)", ha="left", va="top", fontsize=6)
 
 # Now find frame boundaries and draw frames
 frame_boundaries = []
+frame_shifts = []
 
 for i in range(nframes):
 
     # Find the minimum and maximum slopes that are allowed through each frame
     slope_min = 1.0e30
     slope_max = -1.0e30
-    for ch in choppers:
+    for key, ch in choppers.items():
 
         # For now, ignore Wavelength band double chopper
         if len(ch.openings) == nframes * 2:
@@ -193,6 +145,10 @@ for i in range(nframes):
     x5 = (y5 - b1)/a1
     x4 = (y4 - b2)/a2
     frame_boundaries.append([x4, x5])
+
+    # Compute frame shifts from fastest neutrons in frame
+    frame_shifts.append((wfm_choppers_midpoint - b2)/a2)
+
     ax.fill([x0, x1, x4, x5], [y0, y1, y4, y5], alpha=0.3, color=colors[i])
     ax.plot([x0, x5], [y0, y5], color=colors[i], lw=1)
     ax.plot([x1, x4], [y1, y4], color=colors[i], lw=1)
@@ -204,10 +160,15 @@ for i in range(nframes):
 ax.plot([0, np.amax(frame_boundaries)], [detector_position, detector_position], lw=3, color='grey')
 ax.text(0.0, detector_position, "Detector", va="bottom", ha="left")
 
+ax.plot([0, np.amax(frame_boundaries)], [wfm_choppers_midpoint, wfm_choppers_midpoint], lw=1, color='grey', ls="dashed")
+ax.text(np.amax(frame_boundaries), wfm_choppers_midpoint, "WFM chopper mid-point", va="bottom", ha="right")
+
+
 # Print results
 print("The frame boundaries are:", frame_boundaries)
 frame_gaps = [0.5*(frame_boundaries[i][1]+frame_boundaries[i+1][0]) for i in range(len(frame_boundaries)-1)]
 print("The frame gaps are:", frame_gaps)
+print("The frame shifts are:", frame_shifts)
 
 # Save the figure
 ax.set_xlabel("Time [microseconds]")
