@@ -59,8 +59,10 @@ choppers["FOL2"] = Chopper(frequency=28,
                            name="Frame-overlap 2")
 
 
-# Seconds to microseconds
+# Conversion factors
 microseconds = 1.0e6
+v_to_lambda = 3956.0
+v_to_mev = 437.0
 
 # Number of frames
 nframes = 6
@@ -108,6 +110,7 @@ ax.text(x0, -psize, "Source pulse (2.86 ms)", ha="left", va="top", fontsize=6)
 # Now find frame boundaries and draw frames
 frame_boundaries = []
 frame_shifts = []
+frame_velocities = []
 
 for i in range(nframes):
 
@@ -138,6 +141,8 @@ for i in range(nframes):
     a2 = (y2 - y1) / (x2 - x1)
     b1 = y0 - a1 * x0
     b2 = y1 - a2 * x1
+    # This is the neutron velocities
+    frame_velocities.append([a1 * microseconds, a2 * microseconds])
 
     y4 = detector_position
     y5 = detector_position
@@ -163,11 +168,40 @@ ax.text(0.0, detector_position, "Detector", va="bottom", ha="left")
 ax.plot([0, np.amax(frame_boundaries)], [wfm_choppers_midpoint, wfm_choppers_midpoint], lw=1, color='grey', ls="dashed")
 ax.text(np.amax(frame_boundaries), wfm_choppers_midpoint, "WFM chopper mid-point", va="bottom", ha="right")
 
-# Print results
-print("The frame boundaries are:", frame_boundaries)
-frame_gaps = [0.5*(frame_boundaries[i][1]+frame_boundaries[i+1][0]) for i in range(len(frame_boundaries)-1)]
-print("The frame gaps are:", frame_gaps)
-print("The frame shifts are:", frame_shifts)
+# Print results as a table:
+output = "=================================================================================================\n"
+output += "                     "
+for i in range(nframes):
+    output += "Frame {}      ".format(i+1)
+output += "\nLeft boundary [us]:  "
+for i in range(nframes):
+    output += "{:.5e}  ".format(frame_boundaries[i][0])
+output += "\nRight boundary [us]: "
+for i in range(nframes):
+    output += "{:.5e}  ".format(frame_boundaries[i][1])
+output += "\nFrame shift [us]:    "
+for i in range(nframes):
+    output += "{:.5e}  ".format(frame_shifts[i])
+output += "\nMin speed [m/s]:     "
+for i in range(nframes):
+    output += "{:.5e}  ".format(frame_velocities[i][0])
+output += "\nMax speed [m/s]:     "
+for i in range(nframes):
+    output += "{:.5e}  ".format(frame_velocities[i][1])
+output += "\nMin wavelength [AA]: "
+for i in range(nframes):
+    output += "{:.5e}  ".format(v_to_lambda / frame_velocities[i][1])
+output += "\nMax wavelength [AA]: "
+for i in range(nframes):
+    output += "{:.5e}  ".format(v_to_lambda / frame_velocities[i][0])
+output += "\nMin energy [meV]:    "
+for i in range(nframes):
+    output += "{:.5e}  ".format((frame_velocities[i][0]/v_to_mev)**2)
+output += "\nMax energy [meV]:    "
+for i in range(nframes):
+    output += "{:.5e}  ".format((frame_velocities[i][1]/v_to_mev)**2)
+output += "\n================================================================================================="
+print(output)
 
 # Save the figure
 ax.set_xlabel("Time [microseconds]")
