@@ -14,6 +14,7 @@ class Pulse:
 
         self.birth_times = None
         self.wavelengths = None
+        self.speeds = None
 
         self.wavelength_min = 1.0  # Angstrom
         self.wavelength_max = 10.0  # Angstrom
@@ -30,3 +31,4 @@ class Pulse:
         self.wavelengths = np.random.uniform(
             self.wavelength_min, self.wavelength_max, n
         )
+        self.speeds = units.wavelength_to_speed(self.wavelengths)
