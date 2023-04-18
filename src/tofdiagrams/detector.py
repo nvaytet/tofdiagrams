@@ -13,7 +13,7 @@ class Detector:
 
     @property
     def tofs(self):
-        return s_to_us(self._arrival_times[~self._mask])
+        return s_to_us(self._arrival_times[self._mask])
 
     def hist(self, bins=100):
         return np.histogram(self.tofs, bins=bins)

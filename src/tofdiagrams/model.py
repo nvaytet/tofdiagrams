@@ -1,15 +1,13 @@
 import numpy as np
+from matplotlib import colormaps
+import matplotlib.pyplot as plt
 
-from . import units
+from .units import s_to_us
 from .pulse import Pulse
 
 
 class Model:
     def __init__(self, choppers, detector, neutrons=1_000_000, pulse=None):
-        # # Conversion factors
-        # microseconds = 1.0e6
-        # v_to_lambda = 3956.0
-        # v_to_mev = 437.0
         self.choppers = choppers
         self.detector = detector
         self.pulse = pulse
@@ -19,12 +17,7 @@ class Model:
 
         self.pulse.make_neutrons(neutrons)
 
-    # ray_trace(choppers=choppers, neutrons=neutrons, pulse_length=pulse_length)
-
     def ray_trace(self):
-        # self.arrival_times = {}
-        # self.masks = {}
-
         sorted_choppers = [
             k
             for k, v in sorted(
@@ -36,7 +29,7 @@ class Model:
         initial_mask = np.full_like(self.pulse.birth_times, True, dtype=bool)
         for name in sorted_choppers:
             ch = self.choppers[name]
-            t = ch.distance / self.pulse.speeds
+            t = self.pulse.birth_times + ch.distance / self.pulse.speeds
             ch._arrival_times = t
             m = np.full_like(t, False, dtype=bool)
             to = ch.open_times
@@ -47,8 +40,40 @@ class Model:
             ch._mask = combined
             initial_mask = combined
 
-        self.detector._arrival_times = self.detector.distance / self.pulse.speeds
+        self.detector._arrival_times = (
+            self.pulse.birth_times + self.detector.distance / self.pulse.speeds
+        )
         self.detector._mask = initial_mask
+
+    def plot(self, nrays=1000):
+        cmap = colormaps["gist_rainbow_r"]
+        fig, ax = plt.subplots()
+        tofs = self.detector.tofs
+        inds = np.random.choice(len(tofs), size=nrays, replace=False)
+        for i in inds:
+            ax.plot(
+                [s_to_us(self.pulse.birth_times[self.detector._mask][i]), tofs[i]],
+                [0, self.detector.distance],
+                color=cmap(
+                    (
+                        self.pulse.wavelengths[self.detector._mask][i]
+                        - self.pulse.wavelength_min
+                    )
+                    / (self.pulse.wavelength_max - self.pulse.wavelength_min)
+                ),
+            )
+        for name, ch in self.choppers.items():
+            x0 = s_to_us(ch.open_times)
+            x1 = s_to_us(ch.close_times)
+            x = np.empty(3 * x0.size, dtype=x0.dtype)
+            x[0::3] = x0
+            x[1::3] = 0.5 * (x0 + x1)
+            x[2::3] = x1
+            x = np.concatenate([[0], x, [tofs.max()]])
+            y = np.full_like(x, ch.distance)
+            y[2::3] = None
+            ax.plot(x, y, color="k")
+        return fig
 
     def __repr__(self):
         return (
